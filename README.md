@@ -1,4 +1,4 @@
-Tennote
+Buzzr
 =======
 
-Tennis Notes Made Simple
+An Internet Based Mobile Buzzer System
