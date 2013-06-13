@@ -17,6 +17,4 @@
 	
 	<preference name="orientation" value="portrait" />
 	
-	<icon src="css/images/buzzr.png" />
-	
 </widget>
