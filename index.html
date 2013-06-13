@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Bootstrap 101 Template</title>
+		
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0" />
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.css" />
+		<link rel="stylesheet" href="css/bootstrap.css" />
+		
+		<style>
+			.buzz .ui-btn {
+				height: 100px !important;
+			}
+			
+			.buzz .ui-btn-inner { 
+				padding-top: 35px;
+				font-size: 24px;
+			}
+			
+			.ui-select{
+				width: 100% !important;
+				padding: 0.4em 0!important; 
+			}
+		</style>
+		
+		<script src="phonegap.js"></script>
+		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+		
+		<script type="text/javascript">
+			$(document).bind('mobileinit',function(){
+				$.mobile.selectmenu.prototype.options.nativeMenu = false;
+			});
+		</script>
+		
+		<script src="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
+		<!--<script src="js/socket.io.js"></script>-->
+		<script src="http://buzzr.aws.af.cm/socket.io/socket.io.js"></script>
+		<script src="js/scripts.js"></script>
+	</head>
+	<body>
+		<div data-role="page" data-theme="a">
+			<div data-role="header" id="head">
+				<h1>Buzzr</h1>
+			</div>
+
+			<div data-role="content">	
+				<div id="configview">
+					<p id="greeting" style="text-align: center;">Greetings, human. Please use the form below to enter or create a game. If your chosen game does not exist, it will be created for you. If the play button does not respond, the server may be down, so please try again later.</p>
+					<br><form id="config">
+						<input type="text" name="room" id="room" placeholder="Game Room..." autocomplete="off">
+						<input type="text" name="name" id="name" placeholder="Nickname..." autocomplete="off">
+						<br><button id="play" data-theme="a">Play Game!</button>
+					</form>
+				</div>
+				<div id="gameview" hidden="hidden">
+					
+					<div data-role="fieldcontain">
+						<select name="teamchoice" id="teamchoice">
+							<option value="white">Individual Play</option>
+							<option value="red" data-theme="b">Red Team</option>
+							<option value="blue" data-theme="e">Blue Team</option>
+							<option value="green" data-theme="c">Green Team</option>
+							<option value="orange" data-theme="d">Orange Team</option>
+						</select>
+					</div>
+					
+					<div data-role="collapsible-set" data-corners="false" data-inset="false">
+						<div id="room" class="ui-collapsible ui-collapsible-inset" data-collapsed-icon="arrow-d" data-role="collapsible" data-collapsed="true" data-corners="false">
+							<h3></h3>
+							<ul class="ui-listview" data-role="listview">
+								<li data-theme="a" style="text-align: center;">Your Name: <span id="yourname"></span></li>
+								<li data-theme="a" style="text-align: center;">Admin Status: <span id="adminstatus"></span></li>
+								<li data-theme="a" style="text-align: center;">Locked Out: <span id="lockedout"></span></li>
+							</ul>
+						</div>
+						<div id="whoshere" class="ui-collapsible ui-collapsible-inset" data-collapsed-icon="arrow-d" data-role="collapsible" data-collapsed="true" data-corners="false">
+							<h3 id="whosheretext">Who's Here</h3>
+							<ul id="lvw" data-role="listview" class="ui-listview">
+								<li data-role="controlgroup" id="userlist">
+								</li>
+							</ul>
+						</div>
+					</div><br>
+					
+					<div class="buzz">
+						<button data-theme="e" id="buzzbutton" class="state">Buzz!!</button><br>
+					</div>
+					
+					<div data-role="controlgroup">
+						<button id="clearbutton" data-theme="c">Clear</button>
+						<button id="resetbutton" data-theme="d">Reset</button>
+					</div>
+				</div>
+			</div>
+
+			<div data-role="footer" data-position="fixed">
+				<h4>A Skalon.com Project</h4>
+			</div>
+		</div>
+	</body>
+</html>

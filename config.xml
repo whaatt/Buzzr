@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<widget xmlns = "http://www.w3.org/ns/widgets"
+		xmlns:gap = "http://phonegap.com/ns/1.0"
+		id        = "com.skalon.mobile.buzzr"
+		versionCode="1" 
+		version   = "0.0.1">
+
+	<name>Buzzr</name>
+
+	<description>
+		An Internet Based Mobile Buzzer System 
+	</description>
+
+	<author href="http://www.skalon.com" email="whaatt@gmail.com">
+		Sanjay Kannan
+	</author>
+	
+	<preference name="orientation" value="portrait" />
+	
+	<icon src="css/images/buzzr.png" />
+	
+</widget>

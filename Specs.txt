@@ -1,0 +1,63 @@
+(if preconditions not satisifed or malformed
+	do nothing or return and error message)
+
+connect name room : establish identity with server
+	preconditions - none
+	(if room exists
+		broadcast {room} joined data : server broadcasts join event)
+	(else
+		elevate : add user to admin namespace)
+	identify name room admin users : server returns your name, room, admin status and other users
+	
+ALPHA nick name : identifies yourself as 'name'
+	preconditions - identified with server, in room
+	identify name : server returns your name
+	broadcast {room} changed id name : server broadcasts name change
+
+DEPRECATED create [r_name] : creates a new room with optional parameter name
+	preconditions - identified with server, not part of any other rooms
+	joined r_name : server commands room join
+	elevate : add user to admin namespace
+	
+DEPRECATED join r_name : join game room
+	preconditions - identified with server, not part of any other rooms
+	(if valid r_name [not lobby]
+		joined r_name : server commands room join
+		users data : server sends data about room users via json
+		broadcast {r_name} joined id name : server broadcasts join event)
+	(else
+		invalid : server asserts that r_name is invalid)
+	
+elevate id : elevate user privileges in a room by ID
+	preconditions - commanding user is elevated for room, elevating user exists in room
+	broadcast {room} elevated id : server broadcasts elevate event
+	
+team color : change team
+	preconditions - color is in white (individual), green, orange, blue, red (subject to change); user is in a room; user not on chosen team already
+	broadcast {room} teammate id : teammate has joined team {color}
+
+buzz : buzz in to answer
+	preconditions - room.team status is not buzzed if team, or id status is not buzzed if individual; team/individual status is not locked out
+	broadcast {room} buzzed id : broadcast change in status to buzzed (disable)
+	broadcast {room.elevated} canclear : broadcast to admins that clear is possible
+
+clear : clear buzz
+	preconditions - user is elevated and in room, gameplay status is buzzed
+	(if buzzed user on team 'color'
+		broadcast {room.color} locked : server broadcasts team lockout)
+	{else
+		ID - locked : server sends locked notification to locked user)
+	broadcast {room} cleared : server broadcasts cleared buzz
+	
+reset : reset buzzes
+	preconditions - user is elevated and in room
+	broadcast {room} resetted : server broadcasts reset buzz
+
+leave OR <disconnection> : leave room
+	preconditions - in a room
+	broadcast {room} leaving id : server broadcasts leaving user
+
+DEPRECATED <disconnection>
+	preconditions - none
+	(if user in room r_name
+		broadcast {r_name} leaving id : server broadcasts leaving user)
