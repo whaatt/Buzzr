@@ -2,7 +2,7 @@
 <widget xmlns = "http://www.w3.org/ns/widgets"
 		xmlns:gap = "http://phonegap.com/ns/1.0"
 		id        = "com.skalon.mobile.buzzr"
-		versionCode="1" 
+		versionCode="2" 
 		version   = "0.0.1">
 
 	<name>Buzzr</name>
@@ -20,5 +20,7 @@
 	<icon src="icon.png" />
 	<gap:splash src="splash.png" />
 	<preference name="permissions" value="none"/>
+	
+	<preference name="android-minSdkVersion" value="5" />
 	
 </widget>
