@@ -17,4 +17,6 @@
 	
 	<preference name="orientation" value="portrait" />
 	
+	<icon src="icon.png" />
+	
 </widget>
