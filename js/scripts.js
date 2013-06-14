@@ -10,7 +10,7 @@ $(document).ready(function() {
 	$('#gameview').hide();
 	
 	// create global connection
-	var socket = io.connect('http://buzzr.aws.af.cm');
+	var socket = io.connect('http://whaatt-server.nodejitsu.com');
 	
 	// global vars
 	var room;
