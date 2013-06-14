@@ -2,8 +2,8 @@
 <widget xmlns = "http://www.w3.org/ns/widgets"
 		xmlns:gap = "http://phonegap.com/ns/1.0"
 		id        = "com.skalon.mobile.buzzr"
-		versionCode="7" 
-		version   = "0.0.2">
+		versionCode="8" 
+		version   = "0.0.3">
 
 	<name>Buzzr</name>
 
