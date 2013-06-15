@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Bootstrap 101 Template</title>
+		<title>Buzzr</title>
 		
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0" />
-		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.css" />
+		<link rel="stylesheet" href="css/jQuery.css" /><!-- 1.3.1 -->
 		<link rel="stylesheet" href="css/bootstrap.css" />
 		
 		<style>
@@ -25,17 +25,17 @@
 		</style>
 		
 		<script src="phonegap.js"></script>
-		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+		<script src="js/jQuery.js"></script><!-- 1.9.1 -->
 		
 		<script type="text/javascript">
+			// goes before jQM, after jQuery
 			$(document).bind('mobileinit',function(){
 				$.mobile.selectmenu.prototype.options.nativeMenu = false;
 			});
 		</script>
 		
-		<script src="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
-		<!--<script src="js/socket.io.js"></script>-->
-		<script src="http://whaatt-server.nodejitsu.com/socket.io/socket.io.js"></script>
+		<script src="js/jQMobile.js"></script><!-- 1.3.1 -->
+		<script src="js/socket.io.js"></script><!-- 0.9.16 -->
 		<script src="js/scripts.js"></script>
 	</head>
 	<body>

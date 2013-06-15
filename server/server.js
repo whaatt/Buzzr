@@ -11,9 +11,10 @@ var io = require('socket.io').listen(80),
 // set log level - handshakes only
 // set transport types - WS with xhr fallback
 
-//io.set('log level', 2);
+io.set('log level', 2);
+//flashsocket?
 //io.set('transports', [ 'websocket', 'xhr-polling' ]);
-io.set('transports', [ 'xhr-polling' ]);
+//io.set('transports', [ 'xhr-polling' ]);
 
 // socket.io processes events through this
 // for each, check if data is valid as necessary
@@ -22,73 +23,73 @@ io.sockets.on('connection', function(socket){
 	// event sent after first connection
 	socket.on('connect', function(data){
 		connect(socket, data);
-		console.log('')
-		console.log(players);
-		console.log(buzzrooms);
-		console.log('')
+		//console.log('')
+		//console.log(players);
+		//console.log(buzzrooms);
+		//console.log('')
 	});
 	
 	// user tries to get admin privs
 	socket.on('elevate', function(data){
 		elevate(socket, data);
-		console.log('')
-		console.log(players);
-		console.log(buzzrooms);
-		console.log('')
+		//console.log('')
+		//console.log(players);
+		//console.log(buzzrooms);
+		//console.log('')
 	});
 	
 	// user tries to change team
 	socket.on('team', function(data){
 		team(socket, data);
-		console.log('')
-		console.log(players);
-		console.log(buzzrooms);
-		console.log('')
+		//console.log('')
+		//console.log(players);
+		//console.log(buzzrooms);
+		//console.log('')
 	});
 	
 	// user tries to buzz in
 	socket.on('buzz', function(data){
 		buzz(socket, data);
-		console.log('')
-		console.log(players);
-		console.log(buzzrooms);
-		console.log('')
+		//console.log('')
+		//console.log(players);
+		//console.log(buzzrooms);
+		//console.log('')
 	});
 	
 	// admin user tries to clear buzz
 	socket.on('clear', function(data){
 		clear(socket, data);
-		console.log('')
-		console.log(players);
-		console.log(buzzrooms);
-		console.log('')
+		//console.log('')
+		//console.log(players);
+		//console.log(buzzrooms);
+		//console.log('')
 	});
 	
 	// admin user tries to reset buzzers
 	socket.on('reset', function(data){
 		reset(socket, data);
-		console.log('')
-		console.log(players);
-		console.log(buzzrooms);
-		console.log('')
+		//console.log('')
+		//console.log(players);
+		//console.log(buzzrooms);
+		//console.log('')
 	});
 	
 	// user tries to leave the room
 	socket.on('leave', function(data){
 		leave(socket, data);
-		console.log('')
-		console.log(players);
-		console.log(buzzrooms);
-		console.log('')
+		//console.log('')
+		//console.log(players);
+		//console.log(buzzrooms);
+		//console.log('')
 	});
 	
 	// user disconnects somehow
 	socket.on('disconnect', function(){
 		disconnect(socket);
-		console.log('')
-		console.log(players);
-		console.log(buzzrooms);
-		console.log('')
+		//console.log('')
+		//console.log(players);
+		//console.log(buzzrooms);
+		//console.log('')
 	});
 
 });
