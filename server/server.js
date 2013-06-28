@@ -8,10 +8,10 @@ var io = require('socket.io').listen(80),
 	buzzrooms = new Object();
 	//games = new Object();
 	
-// set log level - handshakes only
+// set log level - warnings only
 // set transport types - WS with xhr fallback
 
-io.set('log level', 2);
+io.set('log level', 1);
 //flashsocket?
 //io.set('transports', [ 'websocket', 'xhr-polling' ]);
 //io.set('transports', [ 'xhr-polling' ]);
@@ -23,73 +23,41 @@ io.sockets.on('connection', function(socket){
 	// event sent after first connection
 	socket.on('connect', function(data){
 		connect(socket, data);
-		//console.log('')
-		//console.log(players);
-		//console.log(buzzrooms);
-		//console.log('')
 	});
 	
 	// user tries to get admin privs
 	socket.on('elevate', function(data){
 		elevate(socket, data);
-		//console.log('')
-		//console.log(players);
-		//console.log(buzzrooms);
-		//console.log('')
 	});
 	
 	// user tries to change team
 	socket.on('team', function(data){
 		team(socket, data);
-		//console.log('')
-		//console.log(players);
-		//console.log(buzzrooms);
-		//console.log('')
 	});
 	
 	// user tries to buzz in
 	socket.on('buzz', function(data){
 		buzz(socket, data);
-		//console.log('')
-		//console.log(players);
-		//console.log(buzzrooms);
-		//console.log('')
 	});
 	
 	// admin user tries to clear buzz
 	socket.on('clear', function(data){
 		clear(socket, data);
-		//console.log('')
-		//console.log(players);
-		//console.log(buzzrooms);
-		//console.log('')
 	});
 	
 	// admin user tries to reset buzzers
 	socket.on('reset', function(data){
 		reset(socket, data);
-		//console.log('')
-		//console.log(players);
-		//console.log(buzzrooms);
-		//console.log('')
 	});
 	
 	// user tries to leave the room
 	socket.on('leave', function(data){
 		leave(socket, data);
-		//console.log('')
-		//console.log(players);
-		//console.log(buzzrooms);
-		//console.log('')
 	});
 	
 	// user disconnects somehow
 	socket.on('disconnect', function(){
 		disconnect(socket);
-		//console.log('')
-		//console.log(players);
-		//console.log(buzzrooms);
-		//console.log('')
 	});
 
 });
@@ -101,24 +69,24 @@ function connect(socket, data){
 	// as necessary
 	
 	// already exists
-	if (players[socket.id] || sockets[socket.id]){
+	if (socket.id in players || socket.id in sockets){
 		return false; // die gracefully
 	}
 	
 	// malformed both
-	if (!data.name && !data.room){
+	if (!'name' in data && !'room' in data){
 		socket.emit('error', {'message' : 'You did not fill anything in. Please try again.'});
 		return false; // die gracefully
 	}
 	
 	// malformed name
-	if (!data.name){
+	if (!'name' in data){
 		socket.emit('error', {'message' : 'No nickname provided. Please try again.'});
 		return false; // die gracefully
 	}
 	
 	// malformed room
-	if (!data.room){
+	if (!'room' in data){
 		socket.emit('error', {'message' : 'No room name provided. Please try again.'});
 		return false; // die gracefully
 	}
@@ -137,11 +105,14 @@ function connect(socket, data){
 	// save name and room to socket
 	players[socket.id] = data;
 	
+	// log name and room to socket
+	console.log(data.name + ' joined room ' + data.room + '.');
+	
 	var roomPlayers = new Object();
 	playerIDs = io.sockets.manager.rooms['/' + data.room];
 
 	// deal with null array
-	if (!playerIDs){
+	if (typeof playerIDs == 'undefined'){
 		playerIDs = [];
 	}
 	
@@ -197,8 +168,13 @@ function connect(socket, data){
 // handle elevate event
 function elevate(socket, data){
 	
+	//gotta connect 'em all first
+	if (!socket.id in players || !socket.id in sockets){
+		return false; // die gracefully
+	}
+	
 	// malformed playerID
-	if (!data.playerID || !players[data.playerID] || !sockets[data.playerID]){
+	if (!'playerID' in data || !data.playerID in players || !data.playerID in sockets){
 		return false // die gracefully
 	}
 	
@@ -217,6 +193,9 @@ function elevate(socket, data){
 	// communicate elevated status to player OR > just broadcast
 	io.sockets.in(players[socket.id].room).emit('elevated', {'playerID' : data.playerID});
 	
+	// log name and room to socket
+	console.log(players[data.playerID].name + ' was elevated in room ' + players[data.playerID].room + '.');
+	
 	// exit gracefully
 	return true;
 	
@@ -225,8 +204,13 @@ function elevate(socket, data){
 // handle team event
 function team(socket, data){
 
+	//gotta connect 'em all first
+	if (!socket.id in players || !socket.id in sockets){
+		return false; // die gracefully
+	}
+
 	// malformed color
-	if (!data.color){
+	if (!'color' in data){
 		return false // die gracefully
 	}
 	
@@ -248,6 +232,9 @@ function team(socket, data){
 	// communicate change in color through broadcast
 	io.sockets.in(players[socket.id].room).emit('teammate', {'playerID' : socket.id, 'color' : data.color});
 	
+	// log name and room to socket
+	console.log(players[socket.id].name + ' joined team ' + data.color + ' in room ' + players[socket.id].room + '.');
+	
 	// exit gracefully
 	return true;
 
@@ -255,6 +242,11 @@ function team(socket, data){
 
 // handle buzz event
 function buzz(socket, data){
+
+	//gotta connect 'em all first
+	if (!socket.id in players || !socket.id in sockets){
+		return false; // die gracefully
+	}
 
 	// check if user is in a room
 	if (!players[socket.id].room){
@@ -279,7 +271,7 @@ function buzz(socket, data){
 	playerIDs = io.sockets.manager.rooms['/' + players[socket.id].room];
 	
 	// deal with null array
-	if (!playerIDs){
+	if (typeof playerIDs == 'undefined'){
 		playerIDs = [];
 	}
 	
@@ -289,6 +281,9 @@ function buzz(socket, data){
 		}
 	}
 	
+	// log name and room to socket
+	console.log(players[socket.id].name + ' (' + players[socket.id].team + ') buzzed in room ' + players[socket.id].room + '.');
+	
 	// exit gracefully
 	return true;
 
@@ -296,6 +291,11 @@ function buzz(socket, data){
 
 // handle clear event
 function clear(socket, data){
+
+	//gotta connect 'em all first
+	if (!socket.id in players || !socket.id in sockets){
+		return false; // die gracefully
+	}
 
 	// check if user is in a room
 	if (!players[socket.id].room){
@@ -327,7 +327,7 @@ function clear(socket, data){
 		playerIDs = io.sockets.manager.rooms['/' + players[socket.id].room];
 	
 		// deal with null array
-		if (!playerIDs){
+		if (typeof playerIDs == 'undefined'){
 			playerIDs = [];
 		}
 		
@@ -343,7 +343,7 @@ function clear(socket, data){
 	playerIDs = io.sockets.manager.rooms['/' + players[socket.id].room];
 	
 	// deal with null array
-	if (!playerIDs){
+	if (typeof playerIDs == 'undefined'){
 		playerIDs = [];
 	}
 	
@@ -358,6 +358,10 @@ function clear(socket, data){
 	delete buzzrooms[players[socket.id].room];
 	io.sockets.in(players[socket.id].room).emit('cleared', {});
 	
+	
+	// log name and room to socket
+	console.log('Room ' + players[socket.id].room + '  was just cleared.');
+	
 	// exit gracefully
 	return true;
 	
@@ -365,6 +369,11 @@ function clear(socket, data){
 
 // handle reset event
 function reset(socket, data){
+
+	//gotta connect 'em all first
+	if (!socket.id in players || !socket.id in sockets){
+		return false; // die gracefully
+	}
 
 	// check if user is in a room
 	if (!players[socket.id].room){
@@ -383,7 +392,7 @@ function reset(socket, data){
 	playerIDs = io.sockets.manager.rooms['/' + players[socket.id].room];
 	
 	// deal with null array
-	if (!playerIDs){
+	if (typeof playerIDs == 'undefined'){
 		playerIDs = [];
 	}
 	
@@ -401,6 +410,9 @@ function reset(socket, data){
 	// finally, broadcast this stuff
 	io.sockets.in(players[socket.id].room).emit('resetted', {});
 
+	// log name and room to socket
+	console.log('Room ' + players[socket.id].room + '  was just reset.');
+	
 	// exit gracefully
 	return true;
 
@@ -413,7 +425,7 @@ function leave(socket, data){
 	socket.disconnect();
 	
 	// async sanity check
-	if (!players[socket.id]){
+	if (!socket.id in players){
 		return false;
 	}
 	
@@ -429,7 +441,7 @@ function leave(socket, data){
 function disconnect(socket){
 	
 	// async sanity check
-	if (!players[socket.id]){
+	if (!socket.id in players){
 		return false;
 	}
 	
@@ -454,9 +466,12 @@ function cleanup(ID, room){
 	playerIDs = io.sockets.manager.rooms['/' + room];
 	
 	// deal with null array
-	if (!playerIDs){
+	if (typeof playerIDs == 'undefined'){
 		playerIDs = [];
 	}
+	
+	// log name and room to socket
+	console.log(players[ID].name + ' just left room ' + players[ID].room + '.');
 	
 	//the second condition is some bastard fix here...whut
 	if (playerIDs.length == 0 || (playerIDs.length == 1 && playerIDs[0] == ID)){
