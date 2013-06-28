@@ -12,9 +12,10 @@ var io = require('socket.io').listen(80),
 // set transport types - WS with xhr fallback
 
 io.set('log level', 1);
-//flashsocket?
-//io.set('transports', [ 'websocket', 'xhr-polling' ]);
-//io.set('transports', [ 'xhr-polling' ]);
+
+// flashsocket?
+// io.set('transports', [ 'websocket', 'xhr-polling' ]);
+// io.set('transports', [ 'xhr-polling' ]);
 
 // socket.io processes events through this
 // for each, check if data is valid as necessary
@@ -69,29 +70,29 @@ function connect(socket, data){
 	// as necessary
 	
 	// already exists
-	if (socket.id in players || socket.id in sockets){
+	if ((socket.id in players) || (socket.id in sockets)){
 		return false; // die gracefully
 	}
 	
 	// malformed both
-	if (!'name' in data && !'room' in data){
+	if (!('name' in data) && !('room' in data)){
 		socket.emit('error', {'message' : 'You did not fill anything in. Please try again.'});
 		return false; // die gracefully
 	}
 	
 	// malformed name
-	if (!'name' in data){
+	if (!('name' in data)){
 		socket.emit('error', {'message' : 'No nickname provided. Please try again.'});
 		return false; // die gracefully
 	}
 	
 	// malformed room
-	if (!'room' in data){
+	if (!('room' in data)){
 		socket.emit('error', {'message' : 'No room name provided. Please try again.'});
 		return false; // die gracefully
 	}
 	
-	//save socket by ID
+	// save socket by ID
 	sockets[socket.id] = socket;
 	
 	// truncate nickname and room name to 10 chars
@@ -168,13 +169,13 @@ function connect(socket, data){
 // handle elevate event
 function elevate(socket, data){
 	
-	//gotta connect 'em all first
-	if (!socket.id in players || !socket.id in sockets){
+	// gotta connect 'em all first
+	if (!(socket.id in players) || !(socket.id in sockets)){
 		return false; // die gracefully
 	}
 	
 	// malformed playerID
-	if (!'playerID' in data || !data.playerID in players || !data.playerID in sockets){
+	if (!('playerID' in data) || !(data.playerID in players) || !(data.playerID in sockets)){
 		return false // die gracefully
 	}
 	
@@ -204,29 +205,29 @@ function elevate(socket, data){
 // handle team event
 function team(socket, data){
 
-	//gotta connect 'em all first
-	if (!socket.id in players || !socket.id in sockets){
+	// gotta connect 'em all first
+	if (!(socket.id in players) || !(socket.id in sockets)){
 		return false; // die gracefully
 	}
 
 	// malformed color
-	if (!'color' in data){
+	if (!('color' in data)){
 		return false // die gracefully
 	}
 	
 	var colors = ['white', 'green', 'orange', 'blue', 'red'];
 	
-	//check if color is valid
+	// check if color is valid
 	if (colors.indexOf(data.color) == -1){
 		return false;
 	}
 	
-	//check if user is in a room
+	// check if user is in a room
 	if (!players[socket.id].room){
 		return false;
 	}
 	
-	//actually set the player's color
+	// actually set the player's color
 	players[socket.id].team = data.color;
 	
 	// communicate change in color through broadcast
@@ -243,8 +244,8 @@ function team(socket, data){
 // handle buzz event
 function buzz(socket, data){
 
-	//gotta connect 'em all first
-	if (!socket.id in players || !socket.id in sockets){
+	// gotta connect 'em all first
+	if (!(socket.id in players) || !(socket.id in sockets)){
 		return false; // die gracefully
 	}
 
@@ -292,8 +293,8 @@ function buzz(socket, data){
 // handle clear event
 function clear(socket, data){
 
-	//gotta connect 'em all first
-	if (!socket.id in players || !socket.id in sockets){
+	// gotta connect 'em all first
+	if (!(socket.id in players) || !(socket.id in sockets)){
 		return false; // die gracefully
 	}
 
@@ -319,10 +320,14 @@ function clear(socket, data){
 	// individual lockout
 	if (team == 'white'){
 		players[buzzedPlayerID].locked = true;
-		sockets[buzzedPlayerID].emit('locked', {});
+		
+		// make sure we are emitting to a player that still exists
+		if (buzzedPlayerID in sockets){
+			sockets[buzzedPlayerID].emit('locked', {});
+		}
 	}
 	
-	//team lockout
+	// team lockout
 	else{
 		playerIDs = io.sockets.manager.rooms['/' + players[socket.id].room];
 	
@@ -370,8 +375,8 @@ function clear(socket, data){
 // handle reset event
 function reset(socket, data){
 
-	//gotta connect 'em all first
-	if (!socket.id in players || !socket.id in sockets){
+	// gotta connect 'em all first
+	if (!(socket.id in players) || !(socket.id in sockets)){
 		return false; // die gracefully
 	}
 
@@ -425,7 +430,13 @@ function leave(socket, data){
 	socket.disconnect();
 	
 	// async sanity check
-	if (!socket.id in players){
+	if (!(socket.id in players)){ // || !players[socket.id]){
+		return false;
+	}
+	
+	// check if disconnect already called
+	// and in turn called cleanup()
+	if (!(socket.id in sockets)){
 		return false;
 	}
 	
@@ -441,7 +452,13 @@ function leave(socket, data){
 function disconnect(socket){
 	
 	// async sanity check
-	if (!socket.id in players){
+	if (!(socket.id in players)){
+		return false;
+	}
+	
+	// check if leave already called
+	// and in turn called cleanup()
+	if (!(socket.id in sockets)){
 		return false;
 	}
 	
@@ -473,7 +490,7 @@ function cleanup(ID, room){
 	// log name and room to socket
 	console.log(players[ID].name + ' just left room ' + players[ID].room + '.');
 	
-	//the second condition is some bastard fix here...whut
+	// the second condition is some bastard fix here...whut
 	if (playerIDs.length == 0 || (playerIDs.length == 1 && playerIDs[0] == ID)){
 		// delete buzzroom if room is buzzed
 		if (buzzrooms[players[ID].room]){
