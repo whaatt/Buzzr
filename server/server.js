@@ -365,7 +365,7 @@ function clear(socket, data){
 	
 	
 	// log name and room to socket
-	console.log('Room ' + players[socket.id].room + '  was just cleared.');
+	console.log('Room ' + players[socket.id].room + ' was just cleared.');
 	
 	// exit gracefully
 	return true;
@@ -416,7 +416,7 @@ function reset(socket, data){
 	io.sockets.in(players[socket.id].room).emit('resetted', {});
 
 	// log name and room to socket
-	console.log('Room ' + players[socket.id].room + '  was just reset.');
+	console.log('Room ' + players[socket.id].room + ' was just reset.');
 	
 	// exit gracefully
 	return true;
