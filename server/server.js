@@ -75,19 +75,19 @@ function connect(socket, data){
 	}
 	
 	// malformed both
-	if (!('name' in data) && !('room' in data)){
+	if ((!('name' in data) && !('room' in data)) || (!(data.name) && !(data.room))){
 		socket.emit('error', {'message' : 'You did not fill anything in. Please try again.'});
 		return false; // die gracefully
 	}
 	
 	// malformed name
-	if (!('name' in data)){
+	if (!('name' in data) || !(data.name)){
 		socket.emit('error', {'message' : 'No nickname provided. Please try again.'});
 		return false; // die gracefully
 	}
 	
 	// malformed room
-	if (!('room' in data)){
+	if (!('room' in data) || !(data.room)){
 		socket.emit('error', {'message' : 'No room name provided. Please try again.'});
 		return false; // die gracefully
 	}
